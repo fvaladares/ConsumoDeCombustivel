@@ -11,7 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,7 +23,6 @@ public class TelaCadastro {
     private JRadioButton gasolinaRadioButton;
     private JRadioButton etanolRadioButton;
     private JRadioButton gasRadioButton;
-    private JLabel textFieldPosto;
     private JTextField textFieldNomePosto;
     private JLabel jLabelQuantidade;
     private JFormattedTextField formattedTextFieldQuantidade;
@@ -34,6 +32,7 @@ public class TelaCadastro {
     private JButton buttonExcluir;
     private JTable table1;
     private DefaultTableModel modelo;
+    private ButtonGroup buttonGroupTipoCombustivel;
 
     private RegistrarAbastecimentoData bd = new RegistrarAbastecimentoData();
 
@@ -53,7 +52,7 @@ public class TelaCadastro {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 if (e.getClickCount() == 1) {
-                    System.out.println("Entramos com duplo clique");
+                    System.out.println("Entramos com clique simples");
                     var dados = modelo.getDataVector().elementAt(table1.getSelectedRow());
                     String nomePosto = (String) dados.get(1);
                     String valorTotal = dados.get(2).toString();
@@ -64,7 +63,6 @@ public class TelaCadastro {
                     formattedTextFieldValorTotal.setText(valorTotal);
                     formattedTextFieldData.setText(dataAbastecimento);
                     containerPrincipal.repaint();
-
                 }
             }
         });
@@ -91,11 +89,11 @@ public class TelaCadastro {
         buttonSalvar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                RegistroAbastecimento data = new RegistroAbastecimento();
+                RegistroAbastecimento registroAbastecimento = new RegistroAbastecimento();
                 try {
-                    getData(data);
+                    getData(registroAbastecimento);
                     RegistrarAbastecimentoData registrarAbastecimentoData = new RegistrarAbastecimentoData();
-                    if (registrarAbastecimentoData.cadastrarAbastecimento(data)) {
+                    if (registrarAbastecimentoData.cadastrarAbastecimento(registroAbastecimento)) {
                         JOptionPane.showMessageDialog(null, "Dados Gravados com sucesso.");
                     } else {
                         JOptionPane.showMessageDialog(null, "Falha ao gravar dados, tente novamente mais tarde.");
@@ -123,8 +121,7 @@ public class TelaCadastro {
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        formattedTextFieldData = new JFormattedTextField(dateFormat);
+        formattedTextFieldData = new JFormattedTextField(new SimpleDateFormat("dd/MM/yyyy"));
         formattedTextFieldData.setValue(new Date());
         modelo = new DefaultTableModel();
         table1 = new JTable(modelo);
@@ -134,7 +131,6 @@ public class TelaCadastro {
         modelo.addColumn("Quantidade Combustível");
         modelo.addColumn("Data do Abastecimento");
         modelo.addColumn("Tipo Combustível");
-
     }
 
     public void setData(RegistroAbastecimento data) {
@@ -149,6 +145,13 @@ public class TelaCadastro {
         data.setNomePosto(textFieldNomePosto.getText());
         data.setQuantidade(Double.parseDouble(formattedTextFieldQuantidade.getText()));
         data.setValorTotal(Double.parseDouble(formattedTextFieldValorTotal.getText()));
+        if (etanolRadioButton.isSelected()) {
+            System.out.println("Botão selecionado:" + etanolRadioButton.getText());
+        } else if (gasolinaRadioButton.isSelected()) {
+            System.out.println("Botão selecionado:" + gasRadioButton.getText());
+        } else if (gasRadioButton.isSelected()) {
+            System.out.println("Botão selecionado:" + gasRadioButton.getText());
+        }
     }
 
     public boolean isModified(RegistroAbastecimento data) {
