@@ -33,6 +33,7 @@ public class RegistrarAbastecimentoData {
         }
     }
 
+    // Read
     public ResultSet carregarDados() {
         ResultSet dados = null;
         try {
